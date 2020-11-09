@@ -6,6 +6,18 @@
 #define IDP_OLE_INIT_FAILED             100
 #define IDR_MAINFRAME                   128
 #define IDR_CGWORK0918TYPE              130
+#define IDD_SETCOLOR                    310
+#define IDD_SETFILLCOLOR                312
+#define IDC_R                           1000
+#define IDC_B                           1001
+#define IDC_fg                          1001
+#define IDC_G                           1002
+#define IDC_bg                          1002
+#define IDC_bb                          1003
+#define IDC_br                          1004
+#define IDC_fr                          1005
+#define IDC_EDIT6                       1006
+#define IDC_fb                          1006
 #define ID_32771                        32771
 #define ID_32772                        32772
 #define ID_32773                        32773
@@ -38,9 +50,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        310
+#define _APS_NEXT_RESOURCE_VALUE        314
 #define _APS_NEXT_COMMAND_VALUE         32798
-#define _APS_NEXT_CONTROL_VALUE         1000
+#define _APS_NEXT_CONTROL_VALUE         1008
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

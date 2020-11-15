@@ -36,9 +36,12 @@ BEGIN_MESSAGE_MAP(CCGWORK0918View, CView)
 	ON_COMMAND(ID_Ondraw_Lineto, &CCGWORK0918View::OnOndrawLineto)
 	ON_COMMAND(ID_Ondraw_Rectangle, &CCGWORK0918View::OnOndrawRectangle)
 	ON_COMMAND(ID_Ondraw_Setcolor, &CCGWORK0918View::OnOndrawSetcolor)
-	ON_WM_LBUTTONDBLCLK()
+//	ON_WM_LBUTTONDBLCLK()
 	ON_COMMAND(ID_Area_Filled_Polygon, &CCGWORK0918View::OnAreaFilledPolygon)
 	ON_COMMAND(ID_Area_Filled_Setcolor, &CCGWORK0918View::OnAreaFilledSetcolor)
+	ON_WM_RBUTTONDOWN()
+	ON_COMMAND(ID_DrawBezier, &CCGWORK0918View::OnDrawbezier)
+	ON_COMMAND(ID_Clear, &CCGWORK0918View::OnClear)
 END_MESSAGE_MAP()
 
 // CCGWORK0918View 构造/析构
@@ -65,7 +68,6 @@ BOOL CCGWORK0918View::PreCreateWindow(CREATESTRUCT& cs)
 
 void CCGWORK0918View::OnDraw(CDC* pDC)
 {
-	
 	// TODO: 在此处为本机数据添加绘制代码
 }
 
@@ -176,6 +178,7 @@ void CCGWORK0918View::DrawEllipse(CClientDC* dc, CPoint point1, CPoint point2) {
 
 void CCGWORK0918View::MyAreaFilledPolygon(CClientDC* dc) {
 
+	
 	for (int i = Polygon_y1; i <= Polygon_y2; i++)
 	{
 		for (int j = Polygon_x1; j <= Polygon_x2; j++)
@@ -250,7 +253,7 @@ void CCGWORK0918View::MyAreaFilledPolygon(CClientDC* dc) {
 			if (mask[i][j])
 				inside = !inside;
 			if (inside) {
-				if (pattern[i % 17][j % 36] == 0)
+				if (pattern[i % 26][j % 46] == 0)
 							{
 									dc->SetPixel(j, i, RGB(fill_r, fill_g, fill_b));
 							}
@@ -341,64 +344,65 @@ void CCGWORK0918View::MyAreaFilledPolygon(CClientDC* dc) {
 	//}
 }
 
+
+void CCGWORK0918View::DrawpointRectangle_5(CClientDC* dc,CPoint p,int c_r,int c_g,int c_b ,double distance) {
+
+	
+	double x1, x2, y1, y2;
+	x1 = p.x - distance/2;
+	x2 = p.x + distance / 2;
+	y1 = p.y - distance / 2;
+	y2 = p.y + distance / 2;
+	if (x1 < 0)
+	{
+		x1 = 0;
+	}
+	if (y1 < 0)
+	{
+		y1 = 0;
+	}
+	for (double x = x1; x < x2; x++)
+	{
+		for (double y = y1; y < y2; y++)
+		{
+			dc->SetPixel(x, y, RGB(c_r, c_g, c_b));
+		}
+	}
+	
+}
+
+void CCGWORK0918View::DrawBezRectangle(CClientDC* dc, CPoint p[]) {
+	for (int i = 0; i < 3; i++)
+	{
+		DDALine(dc, p[i].x, p[i].y, p[i + 1].x, p[i + 1].y);
+	}
+}
+
 // CCGWORK0918View 消息处理程序
 
 void CCGWORK0918View::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	
+
 	SetCapture(); //捕捉鼠标
 	m_pLMouseDown = TRUE;//表示鼠标为按下的状态
 	CRect rect;
 	GetClientRect(&rect);//获得并保存用户区坐标
 	ClientToScreen(&rect); //用用户区坐标重新计算屏幕坐标
 	ClipCursor(&rect); //限制光标在用户区内
-	//默认处理，调用基类消息处理函数
-	//绘制多边形
-	if (m_nType == 3)
+	m_Oldpoint = point;//保存光标的当前位置
+	m_Newpoint = point;//存放画线的起始位置
+	if (m_nType == 3 && Polygon_isstart == true)
 	{
-		
+
 		CClientDC dc(this);
 		CPen pen(PS_DOT, 1, RGB(r, g, b));
 		CPen* Oldpen = dc.SelectObject(&pen);
-		if (Polygon_isstart == false)
-		{
-			Polygon_isstart = true;//开始
-			Polygon_point[Polygon_point_num++] = point;
-			Polygon_x1 = Polygon_x2 = point.x;
-			Polygon_y1 = Polygon_y2 = point.y;
-			Polygon_start_point = point;
-			m_Oldpoint = point;
-		}
-		else {
-			m_Newpoint = point;
-			Polygon_point[Polygon_point_num++] = point;
-			//更新范围
-			if (Polygon_x1 > point.x)
-			{
-				Polygon_x1 = point.x;
-			}
-			if (Polygon_x2 < point.x)
-			{
-				Polygon_x2 = point.x;
-			}
-			if (Polygon_y1 > point.y)
-			{
-				Polygon_y1 = point.y;
-			}
-			if (Polygon_y2 < point.y)
-			{
-				Polygon_y2 = point.y;
-			}
-			DDALine(&dc, m_Newpoint.x, m_Newpoint.y, m_Oldpoint.x, m_Oldpoint.y);
-			dc.SelectObject(Oldpen);
-			m_Oldpoint = point;//更新旧点
-		}
+		dc.SetROP2(R2_NOTXORPEN);
+		DDALine(&dc, Polygon_point[Polygon_point_num - 1].x, Polygon_point[Polygon_point_num - 1].y, m_Oldpoint.x, m_Oldpoint.y);//消除之前画的线
+		dc.SelectObject(Oldpen);
 	}
-	else {
-		m_Oldpoint = point;//保存光标的当前位置
-		m_Newpoint = point;//存放画线的起始位置
-	}
+	//}
 	CView::OnLButtonDown(nFlags, point);
 }
 
@@ -413,19 +417,19 @@ void CCGWORK0918View::OnMouseMove(UINT nFlags, CPoint point)
 		//CPen clear(PS_DOT, 1, RGB(0, 0, 0));
 		CPen* Oldpen = dc.SelectObject(&pen);
 		//CPen* clearpen = dc.SelectObject(&clear);
-		dc.SetROP2(R2_MERGEPENNOT);//设置绘图模式，以屏幕颜色的相反色绘图并上画笔
+		dc.SetROP2(R2_NOTXORPEN);//设置绘图模式，以屏幕颜色的相反色绘图并上画笔
 		switch (m_nType) {
 		case 0:
 			DDALine(&dc, m_Newpoint.x, m_Newpoint.y, m_Oldpoint.x, m_Oldpoint.y);//消除之前画的线
 			DDALine(&dc, m_Newpoint.x, m_Newpoint.y, point.x, point.y);//鼠标移动的橡皮线
-			//dc.SelectObject(Oldpen);
+			dc.SelectObject(Oldpen);
 			break;
 		case 1:
 			//dc.Rectangle(m_Newpoint.x, m_Newpoint.y, m_Oldpoint.x, m_Oldpoint.y);
 			//dc.Rectangle(m_Newpoint.x, m_Newpoint.y, point.x, point.y);
 			DrawRectangle(&dc, m_Newpoint.x, m_Newpoint.y, m_Oldpoint.x, m_Oldpoint.y);//消除之前画的线
 			DrawRectangle(&dc, m_Newpoint.x, m_Newpoint.y, point.x, point.y);//鼠标移动的橡皮线
-			//dc.SelectObject(Oldpen);
+			dc.SelectObject(Oldpen);
 			break;
 		case 2:
 			DrawEllipse(&dc,m_Newpoint, m_Oldpoint);
@@ -435,7 +439,11 @@ void CCGWORK0918View::OnMouseMove(UINT nFlags, CPoint point)
 			//dc.Ellipse(m_Newpoint.x, m_Newpoint.y, point.x, point.y);
 			dc.SelectObject(Oldpen);
 			break;
-		
+		case 3:
+			DDALine(&dc, Polygon_point[Polygon_point_num-1].x,Polygon_point[Polygon_point_num - 1].y, m_Oldpoint.x, m_Oldpoint.y);//消除之前画的线
+			DDALine(&dc, Polygon_point[Polygon_point_num - 1].x, Polygon_point[Polygon_point_num - 1].y, point.x, point.y);//鼠标移动的橡皮线
+			dc.SelectObject(Oldpen);
+			break;
 		}
 		m_Oldpoint = point; //存放当前鼠标位置
 	}
@@ -447,12 +455,92 @@ void CCGWORK0918View::OnMouseMove(UINT nFlags, CPoint point)
 //dc.SelectObject(Oldpen);
 void CCGWORK0918View::OnLButtonUp(UINT nFlags, CPoint point)
 {
+	CClientDC dc(this);
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	if (m_pLMouseDown)
 	{
 		m_pLMouseDown = FALSE;//标志鼠标释放
 		ReleaseCapture();//释放鼠标捕捉
 		ClipCursor(NULL);//使光标可以随意移动
+		if (m_nType == 3)
+		{
+			
+			CPen pen(PS_DOT, 1, RGB(r, g, b));
+			CPen* Oldpen = dc.SelectObject(&pen);
+			if (Polygon_isstart == false)
+			{
+				//m_Newpoint = point;
+				Polygon_isstart = true;//开始
+				Polygon_point[Polygon_point_num++] = point;
+				Polygon_x1 = Polygon_x2 = point.x;
+				Polygon_y1 = Polygon_y2 = point.y;
+				Polygon_start_point = point;
+				m_Oldpoint = point;
+			}
+			else {
+				m_Newpoint = point;
+				Polygon_point[Polygon_point_num++] = point;
+				//更新范围
+				if (Polygon_x1 > point.x)
+				{
+					Polygon_x1 = point.x;
+				}
+				if (Polygon_x2 < point.x)
+				{
+					Polygon_x2 = point.x;
+				}
+				if (Polygon_y1 > point.y)
+				{
+					Polygon_y1 = point.y;
+				}
+				if (Polygon_y2 < point.y)
+				{
+					Polygon_y2 = point.y;
+				}
+				DDALine(&dc, Polygon_point[Polygon_point_num - 1].x, Polygon_point[Polygon_point_num - 1].y, Polygon_point[Polygon_point_num - 2].x, Polygon_point[Polygon_point_num - 2].y);
+				dc.SelectObject(Oldpen);
+				m_Oldpoint = point;//更新旧点
+			}
+		}
+		if (m_nType == 15) {
+
+			if (bezier_num == 3) {
+				//当前共有3个点 加入第四个点
+				bezier[bezier_num++] = point;
+				DrawpointRectangle_5(&dc, point, 0, 0, 0, 5);
+				//四点连线 绘制控制多边形
+				DrawBezRectangle(&dc, bezier);
+				//绘制曲线
+				dc.PolyBezier(bezier, 4);
+
+
+			}
+			else if (bezier_num <= 2) {
+				bezier[bezier_num++] = point;
+				DrawpointRectangle_5(&dc, point, 0, 0, 0, 5);
+			}
+			if(bezier_num==4) {
+				//新的一条曲线 重新开始计数
+				bezier_num = 0;
+				for (int i = 0; i < 4; i++)
+				{
+					bezier[i] = NULL;
+				}
+			}
+			/*if (m_nCount == 0) {
+				CClientDC dc(this);
+				for (i = 0; i < 4; i++) {
+					newP[i].x = P[i].x;
+					newP[i].y = P[i].y;
+				}
+				bez_to_points(newP, N, newbezier, npoints);
+				for (int i = 0; i <= npoints; i++) {
+					bezier[i].x = (int)newbezier[i].x;
+					bezier[i].y = (int)newbezier[i].y;
+				}
+				dc.Polyline(bezier, npoints + 1);
+			}*/
+		}
 	}
 	CView::OnLButtonUp(nFlags, point);
 }
@@ -464,7 +552,7 @@ void CCGWORK0918View::OnOndrawLineto()
 {
 	// TODO: 在此添加命令处理程序代码
 	m_nType = 0;
-	Invalidate();//清屏
+	//Invalidate();//清屏
 }
 
 
@@ -472,14 +560,14 @@ void CCGWORK0918View::OnOndrawRectangle()
 {
 	// TODO: 在此添加命令处理程序代码
 	m_nType = 1;
-	Invalidate();
+	//Invalidate();
 }
 
 void CCGWORK0918View::OnOndrawEllipse()
 {
 	// TODO: 在此添加命令处理程序代码
 	m_nType = 2;
-	Invalidate();
+	//Invalidate();
 }
 
 void CCGWORK0918View::OnOndrawSetcolor()
@@ -494,9 +582,7 @@ void CCGWORK0918View::OnOndrawSetcolor()
 	}
 }
 
-
-
-void CCGWORK0918View::OnLButtonDblClk(UINT nFlags, CPoint point)
+void CCGWORK0918View::OnRButtonDown(UINT nFlags, CPoint point)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	if (m_nType == 3)
@@ -507,33 +593,73 @@ void CCGWORK0918View::OnLButtonDblClk(UINT nFlags, CPoint point)
 			CClientDC dc(this);
 			CPen pen(PS_DOT, 1, RGB(r, g, b));
 			CPen* Oldpen = dc.SelectObject(&pen);
-				DDALine(&dc, m_Newpoint.x, m_Newpoint.y, Polygon_start_point.x, Polygon_start_point.y);
-				dc.SelectObject(Oldpen);
-				MyAreaFilledPolygon(&dc);
-				for (int i = 0; i <= Polygon_point_num; i++)
-				{
-					Polygon_point[i] = NULL;
-				}
-				Polygon_point_num = 0;
-				
-				m_Oldpoint = NULL;
-				m_Newpoint = NULL;
-				Polygon_start_point = NULL;
+			DDALine(&dc, Polygon_point[Polygon_point_num - 1].x, Polygon_point[Polygon_point_num - 1].y, Polygon_point[0].x, Polygon_point[0].y);
+			dc.SelectObject(Oldpen);
+			MyAreaFilledPolygon(&dc);
+			for (int i = 0; i <= Polygon_point_num; i++)
+			{
+				Polygon_point[i] = NULL;
+			}
+			Polygon_point_num = 0;
+
+			m_Oldpoint = NULL;
+			m_Newpoint = NULL;
+			Polygon_start_point = NULL;
 		}
-		
+
 
 	}
-	
-	CView::OnLButtonDblClk(nFlags, point);
+	CView::OnRButtonDown(nFlags, point);
 }
+
+//改成右键结束输入的原因：左键双击必然会导致左键单击导致一个点的输入。无法用橡皮线看。
+//void CCGWORK0918View::OnLButtonDblClk(UINT nFlags, CPoint point)
+//{
+//	// TODO: 在此添加消息处理程序代码和/或调用默认值
+//	if (m_nType == 3)
+//	{
+//		if (Polygon_isstart == true)
+//		{
+//			Polygon_isstart = false;
+//			CClientDC dc(this);
+//			CPen pen(PS_DOT, 1, RGB(r, g, b));
+//			CPen* Oldpen = dc.SelectObject(&pen);
+//			DDALine(&dc, Polygon_point[Polygon_point_num - 1].x, Polygon_point[Polygon_point_num - 1].y, Polygon_point[0].x, Polygon_point[0].y);
+//			//DDALine(&dc, m_Newpoint.x, m_Newpoint.y, Polygon_start_point.x, Polygon_start_point.y);
+//			dc.SelectObject(Oldpen);
+//			MyAreaFilledPolygon(&dc);
+//				for (int i = 0; i <= Polygon_point_num; i++)
+//				{
+//					Polygon_point[i] = NULL;
+//				}
+//				Polygon_point_num = 0;
+//				
+//				m_Oldpoint = NULL;
+//				m_Newpoint = NULL;
+//				Polygon_start_point = NULL;
+//		}
+//		
+//
+//	}
+//	
+//	CView::OnLButtonDblClk(nFlags, point);
+//}
 
 
 void CCGWORK0918View::OnAreaFilledPolygon()
 {
 	
 	m_nType = 3;
-	Polygon_isstart == false;
-	Invalidate();
+	Polygon_isstart = false;
+	for (int i = 0; i <= Polygon_point_num; i++)
+	{
+		Polygon_point[i] = NULL;
+	}
+	Polygon_point_num = 0;
+
+	m_Oldpoint = NULL;
+	m_Newpoint = NULL;
+	Polygon_start_point = NULL;
 	//Invalidate();
 	// TODO: 在此添加命令处理程序代码
 }
@@ -557,4 +683,25 @@ void CCGWORK0918View::OnAreaFilledSetcolor()
 		fill_g = dia.f_g;
 		fill_b = dia.f_b;
 	}
+}
+
+
+
+
+
+
+void CCGWORK0918View::OnDrawbezier()
+{
+	m_nType = 15;
+	// TODO: 在此添加命令处理程序代码
+
+
+}
+
+
+
+void CCGWORK0918View::OnClear()
+{
+	// TODO: 在此添加命令处理程序代码
+	Invalidate();
 }

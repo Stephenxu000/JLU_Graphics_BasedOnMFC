@@ -16,7 +16,6 @@
 #define IDC_bb                          1003
 #define IDC_br                          1004
 #define IDC_fr                          1005
-#define IDC_EDIT6                       1006
 #define IDC_fb                          1006
 #define ID_32771                        32771
 #define ID_32772                        32772
@@ -45,13 +44,17 @@
 #define ID_Ondraw_Setcolor              32795
 #define ID_Area_Filled_Polygon          32796
 #define ID_Area_Filled_Setcolor         32797
+#define ID_32798                        32798
+#define ID_DrawBezier                   32799
+#define ID_32800                        32800
+#define ID_Clear                        32801
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        314
-#define _APS_NEXT_COMMAND_VALUE         32798
+#define _APS_NEXT_COMMAND_VALUE         32802
 #define _APS_NEXT_CONTROL_VALUE         1008
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

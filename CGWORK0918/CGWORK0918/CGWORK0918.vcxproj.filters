@@ -45,6 +45,30 @@
     <ClInclude Include="SetFillColor.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="CMapElement.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CLine.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CEllipse.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CEllipseRegion.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CRectangleRegion.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CMapList.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="setcube.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CBezier.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainFrm.cpp">
@@ -66,6 +90,30 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="SetFillColor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CMapElement.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CLine.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CEllipse.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CEllipseRegion.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CRectangleRegion.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CMapList.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="setcube.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CBezier.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

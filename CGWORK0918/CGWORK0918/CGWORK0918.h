@@ -28,6 +28,7 @@ public:
 // 实现
 	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()
+//	afx_msg void OnCubeRotX();
 };
 
 extern CCGWORK0918App theApp;

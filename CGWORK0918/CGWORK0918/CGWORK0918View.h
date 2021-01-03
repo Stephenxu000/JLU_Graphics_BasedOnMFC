@@ -3,8 +3,6 @@
 //
 
 #pragma once
-
-
 class CCGWORK0918View : public CView
 {
 protected: // 仅从序列化创建
@@ -13,6 +11,11 @@ protected: // 仅从序列化创建
 
 // 特性
 public:
+	typedef struct CPoint3 {
+		LONG x;
+		LONG y;
+		LONG z;
+	};//三维点
 	CCGWORK0918Doc* GetDocument() const;
 	int m_nType = 0;//绘制类型
 	CPoint m_Oldpoint;
@@ -56,7 +59,25 @@ public:
 	bool m_pLMouseDown=false;
 	CPoint bezier[4];//记录bezier曲线四点
 	int bezier_num = 0;//当前第几个点
-
+	int cube_a = 250;//多边形边长的一半
+	CPoint3 cube_point[8];//定义立方体
+	CPoint cube_2Dpoint[8];//立方体的二维点
+	int cube_length = 1;//移动距离
+	bool if_init = false;
+	int angle = 10;//旋转角度
+	int* rot=new int[3];
+	int* trans=new int[3];
+	int cube_color[6][3] = {0};
+	int cubetype=1;
+	int cubefaces[6][4] = {
+		{0,1,2,3},
+		{7,6,5,4},
+		{1,5,6,2},
+		{0,3,7,4},
+		{0,4,5,1},
+		{3,2,6,7},
+	};
+	int cubestate;
 	//CArray<line,Line> list;
 // 操作
 public:
@@ -66,6 +87,13 @@ public:
 	void MyAreaFilledPolygon(CClientDC* dc);//多边形区域填充
 	void DrawpointRectangle_5(CClientDC* dc,CPoint p, int c_r, int c_g, int c_b, double distance);//以控制点为中心画边长为x的小矩形。
 	void DrawBezRectangle(CClientDC* dc, CPoint p[]);//绘制控制多边形
+	void DrawCube(CClientDC* dc,int type);//绘制立方体
+	void setCubePoint();//立方体点初始化
+	void fillcubeface(CPoint* P, CClientDC* dc, int cube_r, int cube_g, int cube_b, int type);
+	
+	//void DrawRect(CPoint P1, CPoint P2, CPoint P3, CPoint P4, COLORREF c);
+	double** cube_translate(double** t);
+	double** cube_rotate(double** t);
 	
 // 重写
 public:
@@ -90,7 +118,8 @@ protected:
 protected:
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg
+	void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnOndrawEllipse();
@@ -103,6 +132,17 @@ public:
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnDrawbezier();
 	afx_msg void OnClear();
+//	afx_msg void OnDarwcube();
+	afx_msg void OnDarwcube();
+	afx_msg void OnCubeXPan();
+	afx_msg void OnCubeYPan();
+	afx_msg void OnCubeZPan();
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnSetCube();
+	afx_msg void OnChangecube();
+	afx_msg void OnCubeRotX();
+	afx_msg void OnCubeRotY();
+	afx_msg void OnCubeRotZ();
 };
 
 #ifndef _DEBUG  // CGWORK0918View.cpp 中的调试版本

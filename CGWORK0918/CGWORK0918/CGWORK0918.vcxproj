@@ -184,21 +184,36 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CBezier.h" />
+    <ClInclude Include="CEllipse.h" />
+    <ClInclude Include="CEllipseRegion.h" />
     <ClInclude Include="CGWORK0918.h" />
     <ClInclude Include="CGWORK0918Doc.h" />
     <ClInclude Include="CGWORK0918View.h" />
+    <ClInclude Include="CLine.h" />
+    <ClInclude Include="CMapElement.h" />
+    <ClInclude Include="CMapList.h" />
+    <ClInclude Include="CRectangleRegion.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SetColor.h" />
+    <ClInclude Include="setcube.h" />
     <ClInclude Include="SetFillColor.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CBezier.cpp" />
+    <ClCompile Include="CEllipse.cpp" />
+    <ClCompile Include="CEllipseRegion.cpp" />
     <ClCompile Include="CGWORK0918.cpp" />
     <ClCompile Include="CGWORK0918Doc.cpp" />
     <ClCompile Include="CGWORK0918View.cpp" />
+    <ClCompile Include="CLine.cpp" />
+    <ClCompile Include="CMapElement.cpp" />
+    <ClCompile Include="CMapList.cpp" />
+    <ClCompile Include="CRectangleRegion.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -207,6 +222,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SetColor.cpp" />
+    <ClCompile Include="setcube.cpp" />
     <ClCompile Include="SetFillColor.cpp" />
   </ItemGroup>
   <ItemGroup>

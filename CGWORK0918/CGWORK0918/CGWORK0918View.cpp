@@ -18,7 +18,11 @@
 #endif
 #include "SetColor.h"
 #include "SetFillColor.h"
-
+#include "Setcube.h"
+#include "CLine.h"
+#include "CEllipse.h"
+#include "CEllipseRegion.h"
+#include "CRectangleRegion.h"
 
 // CCGWORK0918View
 
@@ -42,6 +46,17 @@ BEGIN_MESSAGE_MAP(CCGWORK0918View, CView)
 	ON_WM_RBUTTONDOWN()
 	ON_COMMAND(ID_DrawBezier, &CCGWORK0918View::OnDrawbezier)
 	ON_COMMAND(ID_Clear, &CCGWORK0918View::OnClear)
+//	ON_COMMAND(ID_DarwCube, &CCGWORK0918View::OnDarwcube)
+ON_COMMAND(ID_DarwCube, &CCGWORK0918View::OnDarwcube)
+ON_COMMAND(ID_cube_x_pan, &CCGWORK0918View::OnCubeXPan)
+ON_COMMAND(ID_cube_y_pan, &CCGWORK0918View::OnCubeYPan)
+ON_COMMAND(ID_cube_z_pan, &CCGWORK0918View::OnCubeZPan)
+ON_WM_KEYDOWN()
+ON_COMMAND(ID_Set_cube, &CCGWORK0918View::OnSetCube)
+ON_COMMAND(ID_changecube, &CCGWORK0918View::OnChangecube)
+ON_COMMAND(ID_cube_rot_x, &CCGWORK0918View::OnCubeRotX)
+ON_COMMAND(ID_cube_rot_y, &CCGWORK0918View::OnCubeRotY)
+ON_COMMAND(ID_cube_rot_z, &CCGWORK0918View::OnCubeRotZ)
 END_MESSAGE_MAP()
 
 // CCGWORK0918View 构造/析构
@@ -69,6 +84,25 @@ BOOL CCGWORK0918View::PreCreateWindow(CREATESTRUCT& cs)
 void CCGWORK0918View::OnDraw(CDC* pDC)
 {
 	// TODO: 在此处为本机数据添加绘制代码
+	CCGWORK0918Doc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	// TODO: add draw code for native data here
+	//循环图元列表
+
+	for (int i = 0; i < pDoc->m_MapList.GetSize(); i++)
+	{
+		//获得图元列表中的图元子类指针并将其造型成图元基类指针
+		CMapElement* pMap = (CMapElement*)pDoc->m_MapList.GetAt(i);
+		//调用draw函数绘制图元
+	
+		pMap->draw(pDC);
+		//dc.SelectObject(Oldpen);
+	}
+	CClientDC dc(this);
+	if (m_nType == 4) {
+		DrawCube(&dc, cubetype);
+	}
+
 }
 
 
@@ -261,93 +295,14 @@ void CCGWORK0918View::MyAreaFilledPolygon(CClientDC* dc) {
 		}
 	}
 	return;
-	//for (int y = y1; y <= y2; y++)
-	//	for (int x = x1; x <= x2; x++)
-	//		mask[y][x] = false; //形成轮廓线
-
-	//Polygon_point[Polygon_point_num] = Polygon_start_point;
-	//for (int i = 0; i < Polygon_point_num; i++) {
-	//	double Ixs;
-	//	double xs = Polygon_point[i].x;
-	//	//double dxs = (Polygon_point[i + 1].x - Polygon_point[i].x) / (Polygon_point[i + 1].y - Polygon_point[i].y);
-	//	//double dys = abs(Polygon_point[i + 1].y - Polygon_point[i].y) / (Polygon_point[i + 1].y - Polygon_point[i].y);
-	//	double dxs, dys;
-	//	if (Polygon_point[i + 1].y - Polygon_point[i].y != 0)
-	//	{
-	//		dxs = (Polygon_point[i + 1].x - Polygon_point[i].x) / (Polygon_point[i + 1].y - Polygon_point[i].y);
-	//	}
-	//	else {
-	//		int x_max = Polygon_point[i].x;
-	//		int x_min = Polygon_point[i + 1].x;
-	//		if (x_max < x_min)
-	//		{
-	//			int temp = x_max;
-	//			x_max = x_min;
-	//			x_min = temp;
-	//		}
-	//		for (int k = x_min; k <= x_max; k++)
-	//		{
-	//			mask[Polygon_point[i].y][k] = !mask[Polygon_point[i].y][k];
-	//		}
-	//		continue;
-	//	}
-	//	if ((Polygon_point[i + 1].y - Polygon_point[i].y) != 0) {
-	//		dys = abs(Polygon_point[i + 1].y - Polygon_point[i].y) / (Polygon_point[i + 1].y - Polygon_point[i].y);
-	//	}
-	//	else{
-	//		int y_max = Polygon_point[i].y;
-	//		int y_min = Polygon_point[i + 1].y;
-	//		if (y_min > y_max)
-	//		{
-	//			int temp = y_max;
-	//			y_max = y_min;
-	//			y_min = temp;
-
-	//		}
-	//		for (int k = y_min; k <= y_max; k++)
-	//			mask[k][Polygon_point[i].x] = !mask[k][Polygon_point[i].y];
-	//		continue;
-	//	}
-
-	//	for (int j = Polygon_point[i].y; j != Polygon_point[i + 1].y; j = j + dys)
-	//	{
-	//		int Ixs = int(xs + 0.5);
-	//		mask[j][Ixs] = !mask[j][Ixs];
-
-	//		double x1;
-	//		x1 = xs + dys * dxs;
-	//		xs = x1;
-	//	}
-	//}
-	//if ((Polygon_point[0].y - Polygon_point[1].y) * (Polygon_point[0].y - Polygon_point[Polygon_point_num - 1].y) > 0)
-	//	mask[Polygon_point[0].y][Polygon_point[0].x] = false;
-	//for (int i = 1; i < Polygon_point_num; i++)
-	//{
-	//	if ((Polygon_point[i].y - Polygon_point[i + 1].y) * (Polygon_point[i].y - Polygon_point[i - 1].y) > 0)
-	//		mask[Polygon_point[i].y][Polygon_point[i].x] = false;
-	//}
-	//bool inside = false;
-	//for (int y = y1; y <= y2; y++) {//按轮廓线填充
-	//	 inside = false;
-	//	for (int x = x1; x <= x2; x++) {
-	//		if (mask[y][x])
-	//			inside = !inside;
-	//		if (inside)
-	//			if (pattern[y % 17][x % 36] == 0)
-	//			{
-	//				dc->SetPixel(x, y, RGB(fill_r, fill_g, fill_b));
-	//			}
-	//			//else {
-	//				//dc->SetPixel(x, y, RGB(255, 255, 255));
-	//			//}
-	//	}
-	//}
 }
 
 
 void CCGWORK0918View::DrawpointRectangle_5(CClientDC* dc,CPoint p,int c_r,int c_g,int c_b ,double distance) {
 
-	
+	//CPen pen(PS_DOT, 1, RGB(c_r, c_g, c_b));
+	//CPen* Oldpen = dc->SelectObject(&pen);
+	//dc->SetROP2(R2_NOTXORPEN);//设置绘图模式，以屏幕颜色的相反色绘图并上画笔
 	double x1, x2, y1, y2;
 	x1 = p.x - distance/2;
 	x2 = p.x + distance / 2;
@@ -366,6 +321,7 @@ void CCGWORK0918View::DrawpointRectangle_5(CClientDC* dc,CPoint p,int c_r,int c_
 		for (double y = y1; y < y2; y++)
 		{
 			dc->SetPixel(x, y, RGB(c_r, c_g, c_b));
+			/*dc->SelectObject(Oldpen);*/
 		}
 	}
 	
@@ -377,9 +333,177 @@ void CCGWORK0918View::DrawBezRectangle(CClientDC* dc, CPoint p[]) {
 		DDALine(dc, p[i].x, p[i].y, p[i + 1].x, p[i + 1].y);
 	}
 }
+void CCGWORK0918View::setCubePoint()//设置立方体顶点坐标
+{
+	cube_point[0].x= -cube_a;cube_point[0].y = cube_a; cube_point[0].z = cube_a;
+	cube_point[1].x = cube_a; cube_point[1].y = cube_a; cube_point[1].z = cube_a;
+	cube_point[2].x = cube_a; cube_point[2].y = -cube_a; cube_point[2].z = cube_a;
+	cube_point[3].x = -cube_a; cube_point[3].y = -cube_a; cube_point[3].z = cube_a;
+	cube_point[4].x = -cube_a; cube_point[4].y = cube_a; cube_point[4].z = -cube_a;
+	cube_point[5].x = cube_a; cube_point[5].y = cube_a; cube_point[5].z = -cube_a;
+	cube_point[6].x = cube_a; cube_point[6].y = -cube_a; cube_point[6].z = -cube_a;
+	cube_point[7].x = -cube_a; cube_point[7].y =-cube_a; cube_point[7].z = -cube_a;
+}
+//void CCGWORK0918View::DrawRect(CPoint P1, CPoint P2, CPoint P3, CPoint P4, COLORREF c) {
+//	CClientDC dc(this);
+//
+//	dc.MoveTo(P1);
+//	dc.LineTo(P2);
+//	dc.LineTo(P3);
+//	dc.LineTo(P4);
+//	dc.LineTo(P1);
+//	CPen cPen;//生明画笔
+//	dc.SetROP2(R2_COPYPEN);
+//	cPen.CreatePen(PS_DASH, 1, c);
+//	dc.SelectObject(&cPen);
+//	dc.LineTo(P3);
+//	//	dc.Rectangle(P1.x,P1.y,P3.x,P3.y);
+//	cPen.DeleteObject();
+//	CBrush brush;
+//	brush.CreateSolidBrush(RGB(0, 0, 0));
+//	CBrush* oldbrush = dc.SelectObject(&brush);
+//	dc.SelectObject(&brush);
+//	dc.SelectObject(oldbrush);
+//	//dc.SelectObject(oldbrush);
+//}
+double** CCGWORK0918View::cube_translate(double** t) {
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 3; j++)
+			t[i][j] += trans[j];
+	}
+	return t;
+}
+double** CCGWORK0918View::cube_rotate(double** t) {
+	double Trigono[3][2];
+	double tmp[3];
+	double arc;
+	int i, j;
+	for (i = 0; i < 3; i++) {
+		arc = (rot[i] * 3.1415926) / 180;
+		Trigono[i][0] = sin(arc);
+		Trigono[i][1] = cos(arc);
+	}
+	for (i = 0; i < 8; i++) {
+		for (j = 0; j < 3; j++)//X轴
+			tmp[j] = t[i][j];
+		t[i][1] = tmp[1] * Trigono[0][1] - tmp[2] * Trigono[0][0];
+		t[i][2] = tmp[1] * Trigono[0][0] + tmp[2] * Trigono[0][1];
 
+		for (j = 0; j < 3; j++)//Y轴
+			tmp[j] = t[i][j];
+		t[i][2] = tmp[2] * Trigono[1][1] - tmp[0] * Trigono[1][0];
+		t[i][0] = tmp[0] * Trigono[1][1] + tmp[2] * Trigono[1][0];
+
+		for (j = 0; j < 3; j++)//Z轴
+			tmp[j] = t[i][j];
+		t[i][0] = tmp[0] * Trigono[2][1] - tmp[1] * Trigono[2][0];
+		t[i][1] = tmp[0] * Trigono[2][0] + tmp[1] * Trigono[2][1];
+	}
+	return t;
+}
+void CCGWORK0918View::fillcubeface(CPoint* P, CClientDC* dc, int cube_r, int cube_g, int cube_b, int type) {
+	int xl, xr, yt, yd;
+	bool flag;
+	int i, j, k;
+	for (i = 0; i < 4; i++) {
+		DDALine(dc, P[i].x, P[i].y,P[i + 1].x, P[i + 1].y);
+	}
+	if (!type)
+		return;
+	xl = P[0].x;
+	xr = P[0].x;
+	yt = P[0].y;
+	yd = P[0].y;
+
+	for (i = 0; i < 4; i++) {
+		if (P[i].x < xl)
+			xl = P[i].x;
+		if (P[i].x > xr)
+			xr = P[i].x;
+		if (P[i].y < yt)
+			yt = P[i].y;
+		if (P[i].y > yd)
+			yd = P[i].y;
+	}
+	CPoint Vect[4];
+	int Consts[4];
+	for (i = 0; i < 4; i++) {
+		Vect[i].x = P[i + 1].x - P[i].x;
+		Vect[i].y = P[i + 1].y - P[i].y;
+		Consts[i] = P[i].y * Vect[i].x - P[i].x * Vect[i].y;
+	}
+	for (i = yt; i <= yd; i++)
+		for (j = xl; j <= xr; j++) {
+			flag = true;
+			for (k = 0; k < 4; k++)
+				if (Vect[k].y * j - Vect[k].x * i + Consts[k] > 0) {
+					flag = false;
+					break;
+				}
+			if (flag)
+				dc->SetPixel(j, i, RGB(cube_r,cube_g,cube_b));
+		}
+}
+void CCGWORK0918View::DrawCube(CClientDC* dc,int type) {
+	
+	/*for (int i = 0; i < 8; i++) {
+		DrawpointRectangle_5(dc, cube_2Dpoint[i], i*50, i*45, i*100, 10);
+	}
+	DrawRect(cube_2Dpoint[0], cube_2Dpoint[4], cube_2Dpoint[7], cube_2Dpoint[3], RGB(cube_color[0][1], cube_color[0][2], cube_color[0][3]));
+	DrawRect(cube_2Dpoint[1], cube_2Dpoint[5], cube_2Dpoint[6], cube_2Dpoint[2], RGB(cube_color[1][1], cube_color[1][2], cube_color[1][3]));
+	DrawRect(cube_2Dpoint[0], cube_2Dpoint[4], cube_2Dpoint[5], cube_2Dpoint[1], RGB(cube_color[2][1], cube_color[2][2], cube_color[2][3]));
+	DrawRect(cube_2Dpoint[3], cube_2Dpoint[7], cube_2Dpoint[6], cube_2Dpoint[2], RGB(cube_color[3][1], cube_color[3][2], cube_color[3][3]));
+	DrawRect(cube_2Dpoint[0], cube_2Dpoint[3], cube_2Dpoint[2], cube_2Dpoint[1], RGB(cube_color[4][1], cube_color[4][2], cube_color[4][3]));
+	DrawRect(cube_2Dpoint[4], cube_2Dpoint[7], cube_2Dpoint[6], cube_2Dpoint[5], RGB(cube_color[5][1], cube_color[5][2], cube_color[5][3]));*/
+	CPoint projPoints[8];
+	int isVisible[6] = { 1,1,1,1,1,1 };
+	CPoint* P = new CPoint[5];
+	int i, j, D, x0, y0, x1, x2, y1, y2;
+	CRect Rect;
+	GetClientRect(&Rect);
+	x0 = (Rect.left + Rect.right) / 2;
+	y0 = (Rect.top + Rect.bottom) / 2;
+	D = min(x0, y0) / 2;
+
+	double** target = new double* [8];
+	for (i = 0; i < 8; i++)
+		target[i] = new double[3];
+	for (i = 0; i < 8; i++)
+	{
+		target[i][0] = cube_point[i].x;
+		target[i][1] = cube_point[i].y;
+		target[i][2] = cube_point[i].z;
+	}
+	target = cube_rotate(target);
+	target = cube_translate(target);
+	for (i = 0; i < 8; i++)
+		target[i][2] = target[i][2] + 2 * D;
+
+	for (i = 0; i < 8; i++) {
+		projPoints[i].x = 2 * D * (target[i][0]) / (target[i][2] + D) + x0;
+		projPoints[i].y = 2 * D * (target[i][1]) / (target[i][2] + D) + y0;
+	}
+
+	for (i = 0; i < 6; i++) {
+		x1 = projPoints[cubefaces[i][0]].x - projPoints[cubefaces[i][1]].x;
+		y1 = projPoints[cubefaces[i][0]].y - projPoints[cubefaces[i][1]].y;
+		x2 = projPoints[cubefaces[i][2]].x - projPoints[cubefaces[i][1]].x;
+		y2 = projPoints[cubefaces[i][2]].y - projPoints[cubefaces[i][1]].y;
+		if (x1 * y2 - x2 * y1 >= 0 && type)
+			isVisible[i] = 0;
+	}
+
+	for (i = 0; i < 6; i++) {
+		if (isVisible[i]) {
+			for (j = 0; j < 4; j++)
+				P[j] = projPoints[cubefaces[i][j]];
+			P[4] = P[0];
+			fillcubeface(P, dc, cube_color[i][0],cube_color[i][1],cube_color[i][2], type);
+		}
+	}
+	
+}
 // CCGWORK0918View 消息处理程序
-
 void CCGWORK0918View::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
@@ -405,9 +529,6 @@ void CCGWORK0918View::OnLButtonDown(UINT nFlags, CPoint point)
 	//}
 	CView::OnLButtonDown(nFlags, point);
 }
-
-
-
 void CCGWORK0918View::OnMouseMove(UINT nFlags, CPoint point)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
@@ -449,7 +570,6 @@ void CCGWORK0918View::OnMouseMove(UINT nFlags, CPoint point)
 	}
 	CView::OnMouseMove(nFlags, point);
 }
-
 //Cpen pen(PS_DOT,3,RGB(0,255,0);
 // CPen *Oldpen=dc.SelectObject(&pen);
 //dc.SelectObject(Oldpen);
@@ -462,6 +582,75 @@ void CCGWORK0918View::OnLButtonUp(UINT nFlags, CPoint point)
 		m_pLMouseDown = FALSE;//标志鼠标释放
 		ReleaseCapture();//释放鼠标捕捉
 		ClipCursor(NULL);//使光标可以随意移动
+		CDC* pDC = this->GetDC();//获得设备环境对象
+//获得文档指针
+		CCGWORK0918Doc* pDoc = GetDocument();
+		ASSERT_VALID(pDoc);
+		if (m_nType == 0) {
+			//构造直线段图元对象指针
+			CLine* line = new CLine();
+			//设置控制点
+			line->SetStartPoint(m_Newpoint);
+			line->SetEndPoint(m_Oldpoint);
+			line->Element_r = r;
+			line->Element_g = g;
+			line->Element_b = b;
+			//绘制直线段图元
+			//line->draw(pDC);
+			//添加直线段图元对象指针到图元列表中
+			pDoc->m_MapList.Add(line);
+			//dc.SelectObject(Oldpen);
+
+		}
+		if (m_nType == 1) {
+			int c;
+			//确保m_StartPoint确实为矩形区域的左上角
+			//m_EndPoint确实是矩形区域的右下角
+			if (m_Newpoint.x > m_Oldpoint.x)
+			{
+				c = m_Newpoint.x;
+				m_Newpoint.x = m_Oldpoint.x;
+				m_Oldpoint.x = c;
+			}
+			if (m_Newpoint.y > m_Oldpoint.y)
+			{
+				c = m_Newpoint.y;
+				m_Newpoint.y = m_Oldpoint.y;
+				m_Oldpoint.y = c;
+			}
+			//终止控制点坐标值加1
+			m_Oldpoint.x++; m_Oldpoint.y++;
+			//构造矩形区域图元对象指针
+			CRectangleRegion* rectangle = new CRectangleRegion();
+			//设置控制点
+			rectangle->SetStartPoint(m_Newpoint);
+			rectangle->SetEndPoint(m_Oldpoint);
+			rectangle->Element_r = r;
+			rectangle->Element_g = g;
+			rectangle->Element_b = b;
+			//绘制矩形区域
+			//rectangle->draw(pDC);
+			//dc.SelectObject(Oldpen);
+			//添加矩形区域图元对象指针到图元列表中
+			pDoc->m_MapList.Add(rectangle);
+
+		}
+		if (m_nType == 2) {
+			//构造椭圆图元对象指针
+			CEllipse* ellipse = new CEllipse();
+			//设置控制点
+			ellipse->SetStartPoint(m_Newpoint);
+			ellipse->SetEndPoint(m_Oldpoint);
+			ellipse->Element_r = r;
+			ellipse->Element_g = g;
+			ellipse->Element_b = b;
+			//绘制椭圆图元
+			//ellipse->draw(pDC);
+			//dc.SelectObject(Oldpen);
+			//添加椭圆图元对象指针到图元列表中
+			pDoc->m_MapList.Add(ellipse);
+
+		}
 		if (m_nType == 3)
 		{
 			
@@ -511,9 +700,21 @@ void CCGWORK0918View::OnLButtonUp(UINT nFlags, CPoint point)
 				//四点连线 绘制控制多边形
 				DrawBezRectangle(&dc, bezier);
 				//绘制曲线
-				dc.PolyBezier(bezier, 4);
-
-
+				//dc.PolyBezier(bezier, 4);
+				double x = 0, bx, by;
+				CPoint mypoint;
+				mypoint = bezier[0];
+				for (double i = 0; i <= 1; i += 0.001)
+				{
+					x = i;
+					double parameters[4] = { (1 - x) * (1 - x) * (1 - x), 3 * x * (1 - x) * (1 - x), 3 * x * x * (1 - x), x * x * x };
+					bx = parameters[0] * bezier[0].x + parameters[1] * bezier[1].x + parameters[2] * bezier[2].x + parameters[3] * bezier[3].x;
+					by = parameters[0] * bezier[0].y + parameters[1] * bezier[1].y + parameters[2] * bezier[2].y + parameters[3] * bezier[3].y;
+					//dc.LineTo(bx, by);
+					DDALine(&dc, mypoint.x, mypoint.y, bx, by);
+					mypoint.x = bx;
+					mypoint.y = by;
+				}
 			}
 			else if (bezier_num <= 2) {
 				bezier[bezier_num++] = point;
@@ -544,18 +745,12 @@ void CCGWORK0918View::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 	CView::OnLButtonUp(nFlags, point);
 }
-
-
-
-
 void CCGWORK0918View::OnOndrawLineto()
 {
 	// TODO: 在此添加命令处理程序代码
 	m_nType = 0;
 	//Invalidate();//清屏
 }
-
-
 void CCGWORK0918View::OnOndrawRectangle()
 {
 	// TODO: 在此添加命令处理程序代码
@@ -611,7 +806,6 @@ void CCGWORK0918View::OnRButtonDown(UINT nFlags, CPoint point)
 	}
 	CView::OnRButtonDown(nFlags, point);
 }
-
 //改成右键结束输入的原因：左键双击必然会导致左键单击导致一个点的输入。无法用橡皮线看。
 //void CCGWORK0918View::OnLButtonDblClk(UINT nFlags, CPoint point)
 //{
@@ -703,5 +897,157 @@ void CCGWORK0918View::OnDrawbezier()
 void CCGWORK0918View::OnClear()
 {
 	// TODO: 在此添加命令处理程序代码
+	CCGWORK0918Doc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	//清空图元列表
+	m_nType = 0;
+	pDoc->m_MapList.RemoveAll();
 	Invalidate();
+}
+
+
+//void CCGWORK0918View::OnDarwcube()
+//{
+//	m_nType = 4;
+//	CClientDC dc(this);
+//	DrawCube(&dc);
+//	// TODO: 在此添加命令处理程序代码
+//}
+
+
+void CCGWORK0918View::OnDarwcube()
+{
+	// TODO: 在此添加命令处理程序代码
+	Invalidate();
+	m_nType = 4;
+	CClientDC dc(this);
+	if_init = true;
+	int d, x0, y0;
+	CRect Rect;
+	GetClientRect(&Rect);
+	x0 = (Rect.left + Rect.right) / 2;
+	y0 = (Rect.top + Rect.bottom) / 2;
+	d = min(x0, y0) / 2;
+	for (int i = 0; i < 3; i++) {
+		trans[i] = 0;
+		rot[i] = 0;
+	}
+	cubetype = false;
+	setCubePoint();
+	DrawCube(&dc,cubetype);
+		// TODO: 在此添加命令处理程序代码
+}
+
+
+
+
+void CCGWORK0918View::OnCubeXPan()
+{
+	// TODO: 在此添加命令处理程序代码
+	//m_nType = 5;
+	cubestate = 1;
+}
+
+
+void CCGWORK0918View::OnCubeYPan()
+{
+	// TODO: 在此添加命令处理程序代码
+	//m_nType = 6;
+	cubestate = 2;
+}
+
+
+void CCGWORK0918View::OnCubeZPan()
+{
+	// TODO: 在此添加命令处理程序代码
+	//m_nType = 7;
+	cubestate = 3;
+}
+
+
+void CCGWORK0918View::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+
+	if (m_nType == 4) {
+		if (!cubestate) {
+			CView::OnKeyDown(nChar, nRepCnt, nFlags);
+			return;
+		}
+		switch (nChar) {
+		case 'A'://VK_A:
+			if (cubestate > 3)
+				rot[cubestate - 4] += angle;
+			else
+				trans[cubestate - 1] += cube_length;
+			break;
+		case 'L'://VK_L:
+			if (cubestate > 3)
+				rot[cubestate - 4] -= angle;
+			else
+				trans[cubestate - 1] -= cube_length;
+			break;
+		}
+		Invalidate();
+	}
+	CView::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+
+
+void CCGWORK0918View::OnSetCube()
+{
+	// TODO: 在此添加命令处理程序代码
+	// TODO: 在此添加命令处理程序代码
+	setcube dia;//构造对话框对象
+	dia.r1 = cube_color[0][0]; dia.g1 = cube_color[0][1]; dia.b1 = cube_color[0][2];
+	dia.r2 = cube_color[1][0]; dia.g2 = cube_color[1][1]; dia.b2 = cube_color[1][2];
+	dia.r3 = cube_color[2][0]; dia.g3 = cube_color[2][1]; dia.b3 = cube_color[2][2];
+	dia.r4 = cube_color[3][0]; dia.g4 = cube_color[3][1]; dia.b4 = cube_color[3][2];
+	dia.r5 = cube_color[4][0]; dia.g5 = cube_color[4][1]; dia.b5 = cube_color[4][2];
+	dia.r6 = cube_color[5][0]; dia.g6 = cube_color[5][1]; dia.b6 = cube_color[5][2];
+	dia.angle = angle;
+	dia.length = cube_length;
+	dia.cube_a = cube_a*2;
+	if (dia.DoModal() == IDOK) {//确定返回IDOK
+		angle = dia.angle;
+		cube_length = dia.length;
+		cube_a = dia.cube_a/2;
+		cube_color[0][0] = dia.r1; cube_color[0][1] = dia.g1; cube_color[0][2] = dia.b1;
+		cube_color[1][0] = dia.r2; cube_color[1][1] = dia.g2; cube_color[1][2] = dia.b2;
+		cube_color[2][0] = dia.r3; cube_color[2][1] = dia.g3; cube_color[2][2] = dia.b3;
+		cube_color[3][0] = dia.r4; cube_color[3][1] = dia.g4; cube_color[3][2] = dia.b4;
+		cube_color[4][0] = dia.r5; cube_color[4][1] = dia.g5; cube_color[4][2] = dia.b5;
+		cube_color[5][0] = dia.r6; cube_color[5][1] = dia.g6; cube_color[5][2] = dia.b6;
+	}
+}
+
+
+
+void CCGWORK0918View::OnChangecube()
+{
+	cubetype = !cubetype;
+	Invalidate();
+	// TODO: 在此添加命令处理程序代码
+}
+
+
+void CCGWORK0918View::OnCubeRotX()
+{
+	// TODO: 在此添加命令处理程序代码
+	cubestate = 4;
+}
+
+
+void CCGWORK0918View::OnCubeRotY()
+{
+	// TODO: 在此添加命令处理程序代码
+	cubestate = 5;
+}
+
+
+void CCGWORK0918View::OnCubeRotZ()
+{
+	// TODO: 在此添加命令处理程序代码
+	cubestate = 6;
 }

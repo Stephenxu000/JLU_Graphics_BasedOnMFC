@@ -26,6 +26,7 @@ BEGIN_MESSAGE_MAP(CCGWORK0918App, CWinApp)
 	ON_COMMAND(ID_FILE_OPEN, &CWinApp::OnFileOpen)
 	// 标准打印设置命令
 	ON_COMMAND(ID_FILE_PRINT_SETUP, &CWinApp::OnFilePrintSetup)
+//	ON_COMMAND(ID_cube_rot_x, &CCGWORK0918App::OnCubeRotX)
 END_MESSAGE_MAP()
 
 
@@ -189,3 +190,9 @@ void CCGWORK0918App::OnAppAbout()
 }
 
 // CCGWORK0918App 消息处理程序
+
+
+//void CCGWORK0918App::OnCubeRotX()
+//{
+//	// TODO: 在此添加命令处理程序代码
+//}

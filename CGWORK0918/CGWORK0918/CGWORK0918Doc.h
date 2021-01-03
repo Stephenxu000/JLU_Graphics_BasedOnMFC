@@ -4,8 +4,7 @@
 
 
 #pragma once
-
-
+#include"CMapList.h"
 class CCGWORK0918Doc : public CDocument
 {
 protected: // 仅从序列化创建
@@ -14,7 +13,7 @@ protected: // 仅从序列化创建
 
 // 特性
 public:
-
+	CMapList m_MapList;//当前绘制的图元的列表
 // 操作
 public:
 
